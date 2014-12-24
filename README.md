@@ -95,3 +95,11 @@ customPermissions:
 ```
 
 Note: The default permission for users that are not logged in is `guest`.
+
+**What happens when the user or guest has no permission?**
+
+If the user has no permission for the desired controller method then there are three possibilities:
+
+1. The controller has a method named `permissionDenied`. In this case the method is called. This gives you the ability to display custom permission denied views for different controllers or redirect to some other page
+2. The value `defaultNoPermissionRoute` in `permissions.yml` is not `NONE`. In this case the request is redirected to this route
+3. Neither a `permissionDenied` nor a `defaultNoPermissionRoute` is set: In this case the response will be a `501 Permission Denied` error page.
