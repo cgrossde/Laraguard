@@ -1,0 +1,27 @@
+{
+	"name": "cgross/laraguard",
+	"description": "Permissions/roles for Laravel 5",
+	"keywords": ["laravel", "permission", "role"],
+	"type": "library",
+	"authors": [
+		{
+			"name": "Christoph Gross",
+			"email": "gross@blubyte.de",
+			"homepage": "http://chris-labs.de"
+		}
+	],
+	"license": "MIT",
+	"require": {
+		"laravel/framework": "~5.0",
+		"symfony/yaml": "~2.1"
+	},
+	 "autoload": {
+        "psr-4": {
+            "CGross\\Laraguard\\": "src"
+        }
+    },
+	"minimum-stability": "dev",
+	"config": {
+		"bin-dir": "bin"
+	}
+}
