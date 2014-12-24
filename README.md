@@ -69,7 +69,7 @@ Extend the `User` model with a method `getPermissions` which returns an array wi
 
 ## Permissions
 
-Create an new file `resources/config/permission.yml` with the following content, adapted to your needs:
+Create an new file `resources/config/permissions.yml` with the following content, adapted to your needs:
 
 ```
 defaultNoPermissionRoute: '/denied'
