@@ -45,7 +45,7 @@ Add this line to the `$routeMiddleware` array in `app/Http/Kernel.php`:
 'laraguard' => 'CGross\Laraguard\Middleware\Permission',
 ```
 
-**Protect specific or all controllers:**
+**Protect controllers:**
 
 For every controller that you want to protect from unauthorized access call the laraguard middleware in the constructor like this:
 ```
@@ -60,7 +60,6 @@ For every controller that you want to protect from unauthorized access call the 
     }
 ```
 
-If you want put every controller under the protection of laraguard, add `'CGross\Laraguard\Middleware\Permission'` to the `$middleware` array in `app/Http/Kernel.php` and remove the entry from `$routeMiddleware`. Note that you need to allow guests access to the Auth and Password controllers to login or send a password reset link.
 
 **Extend the User model:**
 
