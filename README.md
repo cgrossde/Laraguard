@@ -78,8 +78,6 @@ modelActionPermissions:
     - "*@*"
   guest:
     - "Welcome@index"
-    - "Auth@*"
-    - "Password@*"
   user:
     - "Client@index"
     - "Client@show"
