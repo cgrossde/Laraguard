@@ -23,19 +23,12 @@ site.admin:
 
 **Composer:**
 
-Integrate this into your laravel projects `composer.json` and execute `composer update`:
+Laraguard is available on Packagist. Integrate this into your laravel projects `composer.json` and execute `composer update`:
 
 ```
     "require": {
-        "cgross/laraguard": "dev-master",
+        "cgross/laraguard": "0.1.0",
     },
-
-    "repositories": [
-        {
-            "type": "git",
-            "url": "https://github.com/cgrossde/laraguard"
-        },
-    ],
 ```
 
 **Add middleware:**
