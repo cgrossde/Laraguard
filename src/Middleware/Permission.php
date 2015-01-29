@@ -5,6 +5,7 @@ use Exception;
 use CGross\Laraguard\PermissionParser;
 use CGross\Laraguard\RequestParser;
 use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Contracts\Logging\Log;
 use Illuminate\Contracts\Routing\Middleware;
 use Symfony\Component\Yaml\Parser;
 use Symfony\Component\Yaml\Exception\ParseException;
@@ -77,8 +78,11 @@ class Permission implements Middleware {
 		$this->permissionParser = new PermissionParser($this->requestParser);
 		// Try to load permissions
 		if(! $this->permissionParser->loadPermissions()) {
-			return $this->returnError($this->permissionParser->getErrors());
+            $errors = $this->permissionParser->getErrors();
+            \Log::error('[Laraguard] ERROR - loading of permissions failed: '.join(' # ', $errors));
+			return $this->returnError($errors);
 		}
+        if($this->permissionParser->debugging()) \Log::info('[Laraguard] REQUEST - ControllerPath: '.$this->requestParser->getControllerMethodPath());
 		// Always allow defaultNoPermissionRoute and permissionDenied method
 		if($this->isRequestToDefaultRouteOrPermissionDeniedMethod()) {
 			return $next($request);
@@ -147,14 +151,18 @@ class Permission implements Middleware {
 			$action['controller'] = $controllerPath . '@permissionDenied';
 			// Set new action
 			$this->request->route()->setAction($action);
+            if($this->permissionParser->debugging()) \Log::info('[Laraguard] DENY - with permissionDenied(): '.$action['uses']);
 			return \Route::dispatch($this->request);
 		}
 		// Redirect to default defaultNoPermissionRoute
 		else if($this->permissionParser->hasNoPermissionRoute()) {
-			return redirect($this->permissionParser->getNoPermissionRoute());
+            $noPermissionRoute = $this->permissionParser->getNoPermissionRoute();
+            if($this->permissionParser->debugging()) \Log::info('[Laraguard] DENY - with defaultNoPermissionRoute: '.$noPermissionRoute);
+			return redirect($noPermissionRoute);
 		}
 		// Return permission denied error
 		else {
+            if($this->permissionParser->debugging()) \Log::info('[Laraguard] DENY - with 501 Error');
 			return $this->returnError(['Permission denied']);
 		}
 	}
@@ -167,12 +175,24 @@ class Permission implements Middleware {
 			$userPermissions = $user->getPermissions();
 		}
 
+        // Check if app is in testing mode
+        if($this->permissionParser->isAppInTestingMode()) {
+            // Merge testing permissions with userPermissions
+            $testPerm = array_filter($this->permissionParser->getTestingModePermissions());
+            if($this->permissionParser->debugging()) \Log::info('[Laraguard] TESTING permissions: '.join(',',$testPerm));
+            $userPermissions = array_merge($userPermissions, $testPerm);
+        }
+        // Remove null values
+        $userPermissions = array_filter($userPermissions);
+        $allowedPermissions = array_filter($allowedPermissions);
 		// Intersect permissions
 		$validPermissions = array_intersect($userPermissions, $allowedPermissions);
 
 		if(count($validPermissions) > 0) {
+            if($this->permissionParser->debugging()) \Log::info('[Laraguard] ALLOW - Allowed permissions: '.join(',',$allowedPermissions).' - User: '.join(',',$userPermissions));
 			return true;
 		}
+        if($this->permissionParser->debugging()) \Log::info('[Laraguard] DENY - Allowed permissions: '.join(',',$allowedPermissions).' - User: '.join(',',$userPermissions));
 		return false;
 	}
 }

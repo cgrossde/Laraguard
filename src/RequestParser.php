@@ -9,11 +9,10 @@ class RequestParser {
 	private $request;
 
 	/**
-	 * The model the controller acts on according to naming convetion:
-	 * ModelnameController.php e.g. ClientController => Model: Client
+	 * The name of the controller
 	 * @var string
 	 */
-	private $model;
+	private $controller;
 
 	/**
 	 * The method of the controller that is going to be called by this request
@@ -47,18 +46,18 @@ class RequestParser {
 	 * Analyse request and set vars
 	 */
 	private function analyseRequestAndSetVars() {
-		$this->extractModel();
+		$this->extractControllerName();
 		$this->extractControllerPathAndMethod();
 	}
 
 	/**
 	 * Determine model from controlerMethodPath
 	 */
-	private function extractModel() {
+	private function extractControllerName() {
 		// Regex to get intended model and action from request
-		$modelActionRegex = '/^.+\\\\Http\\\\Controllers\\\\(?<model>.+)Controller@.+$/';
+		$modelActionRegex = '/^.+\\\\Http\\\\Controllers\\\\(?<controller>.+)Controller@.+$/';
 		preg_match($modelActionRegex, $this->controllerMethodPath, $result);
-		$this->model = $result['model'];
+		$this->controller = $result['controller'];
 	}
 
 	/**
@@ -85,8 +84,8 @@ class RequestParser {
 	/**
 	 * @return string
 	 */
-	public function getModel() {
-		return $this->model;
+	public function getControllerName() {
+		return $this->controller;
 	}
 
 	/**
