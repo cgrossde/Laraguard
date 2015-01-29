@@ -111,7 +111,7 @@ If the user has no permission for the desired controller method then there are t
 
 ## Testing
 
-When testing an app you might want to set some defaultPermissions for testing mode. You can do this with the following entries in `permissions.yml`:
+When testing an app you might want to set some defaultPermissions for testing mode. **Those permissions will only work if you test with the same `APP_ENV` that is specified in `appEnv`.** You can do this with the following entries in `permissions.yml`:
 
 ```Yaml
 testing:
@@ -119,9 +119,9 @@ testing:
   defaultPermissions: guest,admin,someOtherPermName
 ```
 
-Those permissions will only work if you test with the same `APP_ENV` that is specified in `appEnv`. If you want to set different Permission for different testcases then you need to add the `LaraguardServiceProvider` in `config/app.php`:
+If you want to set different Permission for different testcases then you need to add the `LaraguardServiceProvider` in `config/app.php`:
 
-```
+```Php
 'CGross\Laraguard\Providers\LaraguardServiceProvider',
 ```
 
@@ -143,7 +143,7 @@ $laraguard->setTemporaryPermissions(['guest','admin'], 2);
 ```
 
 
-**Behat**
+### Behat
 If you are using `Behat` then try the Laraguard trait:
 
 ```Php
@@ -155,10 +155,13 @@ class FeatureContext extends MinkContext implements Context, SnippetAcceptingCon
     use Laraguard;
 
     // Your tests go here
+    // Access laraguard like this:
+    // self::$laraguard->setTemporaryPermissions($permissionArray, $lifetime);
+    // self::$laraguard->resetTemporaryPermissions();
 }
 ```
 
-This trait will automatically clear all temporary permissions after each scenario and if you need you can use `self::$laraguard` in your tests to set or reset permissions. In your behat features you will have the following expressions available:
+This trait will automatically clear all temporary permissions after each scenario and if you need you can use `self::$laraguard` in your tests to set or reset permissions. In your behat features you will have the following new expressions available:
 
 ```
 Scenario: X test permission
