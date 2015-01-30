@@ -28,15 +28,8 @@ Integrate this into your laravel projects `composer.json` and execute `composer 
 
 ```Json
     "require": {
-        "cgross/laraguard": "dev-master",
+        "cgross/laraguard": "~1.0",
     },
-
-    "repositories": [
-        {
-            "type": "git",
-            "url": "https://github.com/cgrossde/laraguard"
-        },
-    ],
 ```
 
 **Add middleware:**
