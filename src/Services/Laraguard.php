@@ -41,4 +41,25 @@ class Laraguard {
     public function resetTemporaryPermissions() {
         return $this->permissionParser->resetTemporaryPermissions();
     }
+
+    /**
+     * Returns an array with all permission names
+     *
+     * @return array
+     */
+    public function getPermissionNames() {
+        $permissionNames = array_keys($this->getPermissionArray());
+        sort($permissionNames);
+        return $permissionNames;
+    }
+
+    /**
+     * Returns an array with all permissions and their respective
+     * children (regex or controller action string)
+     *
+     * @return array
+     */
+    public function getPermissionArray() {
+        return $this->permissionParser->getPermissionArray();
+    }
 }

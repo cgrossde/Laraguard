@@ -25,9 +25,6 @@ class LaraguardServiceProvider extends ServiceProvider {
         $this->app->singleton('Laraguard', function($app) {
             return new Laraguard();
         });
-        $this->app->singleton('CGross\Laraguard\Services\Laraguard', function($app) {
-           return $app->make('Laraguard');
-        });
     }
 
 }

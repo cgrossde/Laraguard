@@ -311,4 +311,30 @@ class PermissionParser {
         \Log::error('[Laraguard] ERROR - could not write permissions.yml');
         return false;
     }
+
+    /**
+     * Returns an array with all permission names
+     *
+     * @return array
+     */
+    public function getPermissionNames() {
+        return array_keys($this->getPermissionArray());
+    }
+
+    /**
+     * Returns an array with all permissions and their respective
+     * children (regex or controller action string)
+     *
+     * @return array
+     */
+    public function getPermissionArray() {
+        if($this->permissionConf !== null) {
+            // Get controller action permissions
+            $permissionArray = $this->permissionConf['controllerActionPermissions'];
+            // Add custom permissions
+            $permissionArray = array_merge($permissionArray, $this->permissionConf['customPermissions']);
+            return $permissionArray;
+        }
+        return [];
+    }
 }
