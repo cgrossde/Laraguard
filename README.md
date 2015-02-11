@@ -58,7 +58,7 @@ For every controller that you want to protect from unauthorized access call the 
 **Extend the User model:**
 
 Extend the `User` model with a method `getPermissions` which returns an array with the users permissions. You might also want to extend the user schema to save permissions in the database. If *Laraguard* is not flexible enough for your needs you can create a new database table for user roles which then references permissions assigned to those roles. Implement it like you want, just make sure the `getPermissions` method exists in the `User` model and that it returns an array with permission names.
-
+Take a look at https://github.com/caffeinated/shinobi or https://github.com/romanbican/roles which both allow you to store roles and permissions for your users. Then adapt the `getPermissions` method in your user model to retrieve the permissions from caffeinated/shinobi or romanbican/roles.
 
 ## Permissions
 
