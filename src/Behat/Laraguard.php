@@ -15,11 +15,14 @@ trait Laraguard {
     }
 
     /**
-     * Clear temporary permissions after each scenario
+     * Clear temporary permissions before each scenario
+     * Also forget about denied requests
      * @BeforeScenario
      */
     public function resetTemporaryPermissions() {
         self::$laraguard->resetTemporaryPermissions();
+        \Session::forget('laraguard_lastDenied');
+        \Session::forget('laraguard_lastDeniedLifetime');
     }
 
     /**
