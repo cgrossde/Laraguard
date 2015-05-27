@@ -35,6 +35,17 @@ class Laraguard {
     }
 
     /**
+     * Returns the currently active temporary permissions
+     * Works only if app in testing mode. Might be needed to
+     * merge a users permissions with the temporary permissions
+     * during testing of the app.
+     * @return array
+     */
+    public function getTemporaryPermissions() {
+        return $this->permissionParser->getTestingModePermissions();
+    }
+
+    /**
      * Reset temporary permission to null
      * @return bool
      */
