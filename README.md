@@ -1,7 +1,5 @@
 # Laraguard WIP
 
-**Attention: breaking changes in v1.0.0, take a look at the bottom of the page**
-
 Adds a permission system to Laravel 5 using the new integrated authentication mechanism. Instead of protecting routes, it protects the controller and its methods. This way you do not expose protected functionality if you forgot to protect a certain route. Controllers are protected with a simple syntax: `ControllerName@MethodName`. If you have a `ClientController.php` and want to add a permission called *client.edit* you would do something like this:
 ```Yaml
 client.edit:
@@ -66,7 +64,8 @@ Create an new file `resources/config/permissions.yml` with the following content
 
 ```Yaml
 defaultNoPermissionRoute: /denied
-debug: true;
+debug: true
+deniedUrlLifetime: 1
 controllerActionPermissions:
   admin:
     - "*@*"
@@ -133,6 +132,9 @@ $laraguard->resetTemporaryPermissions()
 // Or only set temporary permission for X requests
 // In this case only the next two requests will have temporary permissions
 $laraguard->setTemporaryPermissions(['guest','admin'], 2);
+
+// Get temporary permissions (might be handy to merge with user permissions during tests)
+$laraguard->getTemporaryPermissions()
 ```
 
 
@@ -183,6 +185,42 @@ You can now enabled debugging in your `permissions.yml`. This will print debug o
 [Date] acceptance.INFO: [Laraguard] DENY - with defaultNoPermissionRoute: /denied
 ...
 ```
+
+## Redirect after login / get last denied page
+
+Laraguard stores the path of the last denied page in a session var (`laraguard_lastDenied`). This session var will be cleared after X requests (default is two requests). You can change this under `deniedUrlLifetime` in your `permissions.yml`.
+
+Add a login form to your denied page. To redirect a user after login, modify the `redirectPath` method of your `AuthController`:
+
+```PHP
+    public function redirectPath()
+    {
+        // Redirect after denied request?
+        if(\Session::has('laraguard_lastDenied')) {
+            return \Session::get('laraguard_lastDenied');
+        }
+        // Redirect to default path after login/register
+        return property_exists($this, 'redirectTo') ? $this->redirectTo : '/home';
+    }
+```
+
+
+
+
+## Changelog
+
+**1.1.0:**
+
+* Store last denied url to make a *redirect after login* feature possible
+* Give access to testing permissions `getTemporaryPermissions()`
+
+**1.0.0:**
+
+* Added testing capabilities
+* Support for Behat
+* Added debugging (see permission.yml in README)
+
+**0.1.0: Initial release**
 
 ## Breaking changes
 
