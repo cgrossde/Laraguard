@@ -16,7 +16,7 @@ trait Laraguard {
 
     /**
      * Clear temporary permissions after each scenario
-     * @AfterScenario
+     * @BeforeScenario
      */
     public function resetTemporaryPermissions() {
         self::$laraguard->resetTemporaryPermissions();
