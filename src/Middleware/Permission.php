@@ -83,6 +83,8 @@ class Permission implements Middleware {
 			return $this->returnError($errors);
 		}
         if($this->permissionParser->debugging()) \Log::info('[Laraguard] REQUEST - ControllerPath: '.$this->requestParser->getControllerMethodPath());
+        // Handle sessions vars (laraguard_lastDenied)
+        $this->updateSession();
 		// Always allow defaultNoPermissionRoute and permissionDenied method
 		if($this->isRequestToDefaultRouteOrPermissionDeniedMethod()) {
 			return $next($request);
@@ -142,6 +144,9 @@ class Permission implements Middleware {
 	// If non existent, use view defined in permissions.yml (noMatchView)
 	// If NONE, throw 503 error
 	private function denyRequest() {
+        // Store return path to allow redirect after auth, ...
+        \Session::put('laraguard_lastDenied',$this->request->decodedPath());
+        \Session::put('laraguard_lastDeniedLifetime', $this->permissionParser->getDeniedUrlLifetime());
 		// Redirect to permissionDenied method of controller
 		if($this->requestParser->hasControllerPermissionDeniedMethod()) {
 			// Modify request action to direct to method 'permissionDenied'
@@ -195,4 +200,24 @@ class Permission implements Middleware {
         if($this->permissionParser->debugging()) \Log::info('[Laraguard] DENY - Allowed permissions: '.join(',',$allowedPermissions).' - User: '.join(',',$userPermissions));
 		return false;
 	}
+
+
+    /**
+     * We save the last URL if a request was denied. This allows to have
+     * some kind of redirect after login. This last denied URL has a
+     * certain request lifetime which can be set in the permission.yml
+     * as 'deniedUrlLifetime'. That means after X requests we delete the
+     * session var 'laraguard_lastDenied' to avoid side effects.
+     */
+    private function updateSession() {
+        if(\Session::has('laraguard_lastDenied')) {
+            $lifetime = \Session::get('laraguard_lastDeniedLifetime');
+            if($lifetime <= 1) {
+                \Session::forget('laraguard_lastDenied');
+                \Session::forget('laraguard_lastDeniedLifetime');
+            } else {
+                \Session::put('laraguard_lastDeniedLifetime', $lifetime -1);
+            }
+        }
+    }
 }

@@ -337,4 +337,13 @@ class PermissionParser {
         }
         return [];
     }
+
+    public function getDeniedUrlLifetime() {
+        if($this->permissionConf !== null && $this->permissionConf['deniedUrlLifetime']) {
+            return $this->permissionConf['deniedUrlLifetime'];
+        } else {
+            // Return default = 2 request
+            return 2;
+        }
+    }
 }
